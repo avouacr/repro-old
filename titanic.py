@@ -14,17 +14,10 @@ import time
 
 import os
 print(os.getcwd())
+os.chdir("ensae-reproductibilite-projet/")
 
 TrainingData = pd.read_csv('train.csv')
 TestData = pd.read_csv('test.csv')
-
-TrainingData.head()
-TrainingData.info()
-TestData.info()
-
-# Recherchons s'il y a des valeurs manquantes dans ces 2 dataset
-TrainingData.isnull().sum()
-TestData.isnull().sum()
 
 # PARTIE 2 ------------------------------------------------
 # Un peu d'exploration et de feature engineering
@@ -42,18 +35,27 @@ fig, axes=plt.subplots(1,2, figsize=(12, 6)) #layout matplotlib 1 ligne 2 colonn
 fig1_pclass=sns.countplot(data=TrainingData, x ="Pclass",    ax=axes[0]).set_title("fréquence des Pclass")
 fig2_pclass=sns.barplot(data=TrainingData, x= "Pclass",y= "Survived", ax=axes[1]).set_title("survie des Pclass")
 
-#affichage des valeurs distinctes obtenues pour le 1er mot après la , dans les 2 dataset
-print(TrainingData['Name'].apply(lambda x: x.split(',')[1]).apply(lambda x: x.split()[0]).unique())
-print(TestData['Name'].apply(lambda x: x.split(',')[1]).apply(lambda x: x.split()[0]).unique())
-
 # Extraction et ajout de la variable titre
-TrainingData['Title'] = TrainingData['Name'].apply( lambda x: x.split(',')[1]).apply(lambda x: x.split()[0])
-TestData['Title'] = TestData['Name'].apply(lambda x: x.split(',')[1]).apply(lambda x: x.split()[0])
+def creation_variable_titre(df: pd.DataFrame, var: str = "Name"):
+  x = TrainingData['Name'].str.rsplit(",", n = 1).str[-1]
+  x = x.str.split().str[0]
+  #On note que Dona est présent dans le jeu de test à prédire mais dans les variables d'apprentissage on règle ca a la mano
+  return x
+
+TrainingData['Title'] = creation_variable_titre(TrainingData)
+TestData['Title'] = creation_variable_titre(TestData)
+
+#affichage des valeurs distinctes obtenues pour le 1er mot après la , dans les 2 dataset
+print(TrainingData['Title'].unique())
+print(TestData['Title'].unique())
+
+TestData['Title'] = TestData['Title'].replace('Dona.', 'Mrs.')
+
+
 # Suppression de la variable Titre
 TrainingData.drop(labels='Name', axis=1, inplace=True)
 TestData.drop(labels='Name', axis=1, inplace=True)
-#On note que Dona est présent dans le jeu de test à prédire mais dans les variables d'apprentissage on règle ca a la mano
-TestData['Title'] = TestData['Title'].replace('Dona.', 'Mrs.')
+
 
 
 fx, axes = plt.subplots(2, 1, figsize=(15, 10))
