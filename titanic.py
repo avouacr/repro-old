@@ -12,12 +12,22 @@ from sklearn.ensemble import RandomForestClassifier
 import time
 
 
-import os
-print(os.getcwd())
-os.chdir("ensae-reproductibilite-projet/")
+# Extraction et ajout de la variable titre
+def creation_variable_titre(df: pd.DataFrame, var: str = "Name"):
+  x = TrainingData['Name'].str.rsplit(",", n = 1).str[-1]
+  x = x.str.split().str[0]
+  #On note que Dona est présent dans le jeu de test à prédire mais dans les variables d'apprentissage on règle ca a la mano
+  return x
 
-TrainingData = pd.read_csv('train.csv')
-TestData = pd.read_csv('test.csv')
+def create_figure_frequence(df: pd.DataFrame, xvar: str):
+    fig, axes=plt.subplots(1,2, figsize=(12, 6)) #layout matplotlib 1 ligne 2 colonnes taile 16*8
+    fig1_pclass=sns.countplot(data=df, x = xvar,    ax=axes[0]).set_title(f"fréquence des {xvar}")
+    fig2_pclass=sns.barplot(data=df, x= xvar, y= "Survived", ax=axes[1]).set_title(f"survie des {xvar}")
+
+def label_encode_variable(df: pd.DataFrame, var: str = "Sex"):
+  encoder = LabelEncoder()
+  df[var] = encoder.fit_transform(df[var].values)
+  return df
 
 # PARTIE 2 ------------------------------------------------
 # Un peu d'exploration et de feature engineering
@@ -31,19 +41,10 @@ TestData.drop(labels='PassengerId', axis=1, inplace=True)
 
 TrainingData.columns
 
-fig, axes=plt.subplots(1,2, figsize=(12, 6)) #layout matplotlib 1 ligne 2 colonnes taile 16*8
-fig1_pclass=sns.countplot(data=TrainingData, x ="Pclass",    ax=axes[0]).set_title("fréquence des Pclass")
-fig2_pclass=sns.barplot(data=TrainingData, x= "Pclass",y= "Survived", ax=axes[1]).set_title("survie des Pclass")
-
-# Extraction et ajout de la variable titre
-def creation_variable_titre(df: pd.DataFrame, var: str = "Name"):
-  x = TrainingData['Name'].str.rsplit(",", n = 1).str[-1]
-  x = x.str.split().str[0]
-  #On note que Dona est présent dans le jeu de test à prédire mais dans les variables d'apprentissage on règle ca a la mano
-  return x
-
 TrainingData['Title'] = creation_variable_titre(TrainingData)
 TestData['Title'] = creation_variable_titre(TestData)
+
+create_figure_frequence(TrainingData, "Pclass")
 
 #affichage des valeurs distinctes obtenues pour le 1er mot après la , dans les 2 dataset
 print(TrainingData['Title'].unique())
@@ -57,10 +58,8 @@ TrainingData.drop(labels='Name', axis=1, inplace=True)
 TestData.drop(labels='Name', axis=1, inplace=True)
 
 
+create_figure_frequence(TrainingData, "Title")
 
-fx, axes = plt.subplots(2, 1, figsize=(15, 10))
-fig1_title = sns.countplot(data=TrainingData, x='Title', ax=axes[0]).set_title("Fréquence des titres")
-fig2_title = sns.barplot(data=TrainingData, x='Title',y='Survived', ax=axes[1]).set_title("Taux de survie des titres")
 
 # On va pas se faire suer pour notre part on va mettre la moyenne de l'age sur le bateau quand on ne la connait pas.
 sns.distplot(a= TrainingData['Age'].dropna(axis = 0),bins = 15,hist_kws={'rwidth'     :0.7}).set_title("distribution de l'age")
@@ -100,10 +99,7 @@ print(TestData.isnull().sum()   )
 
 # PARTIE 2: Encoder les données imputées ou transformées. ---------------------------
 
-def label_encode_variable(df: pd.DataFrame, var: str = "Sex"):
-  encoder = LabelEncoder()
-  df[var] = encoder.fit_transform(df[var].values)
-  return df
+
 
 
 TrainingData = label_encode_variable(TrainingData, 'Sex')
