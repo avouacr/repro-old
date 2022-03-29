@@ -100,12 +100,15 @@ print(TestData.isnull().sum()   )
 
 # PARTIE 2: Encoder les données imputées ou transformées. ---------------------------
 
-label_encoder_sex = LabelEncoder()
-label_encoder_title = LabelEncoder()
-label_encoder_embarked = LabelEncoder()
-TrainingData['Sex'] = label_encoder_sex.fit_transform(TrainingData['Sex'].values)
-TrainingData['Title'] = label_encoder_title.fit_transform(TrainingData['Sex'].values)
-TrainingData['Embarked'] = label_encoder_embarked.fit_transform(TrainingData['Sex'].values)
+def label_encode_variable(df: pd.DataFrame, var: str = "Sex"):
+  encoder = LabelEncoder()
+  df[var] = encoder.fit_transform(df[var].values)
+  return df
+
+
+TrainingData = label_encode_variable(TrainingData, 'Sex')
+TrainingData = label_encode_variable(TrainingData, 'Title')
+TrainingData = label_encode_variable(TrainingData, 'Embarked')
 
 TrainingData.head()
 
