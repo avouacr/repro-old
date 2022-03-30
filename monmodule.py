@@ -24,7 +24,7 @@ from sklearn.model_selection import GridSearchCV
 
 # Extraction et ajout de la variable titre
 def creation_variable_titre(df: pd.DataFrame, var: str = "Name"):
-  x = TrainingData['Name'].str.rsplit(",", n = 1).str[-1]
+  x = df['Name'].str.rsplit(",", n = 1).str[-1]
   x = x.str.split().str[0]
   #On note que Dona est présent dans le jeu de test à prédire mais dans les variables d'apprentissage on règle ca a la mano
   return x

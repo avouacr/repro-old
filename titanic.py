@@ -4,38 +4,8 @@
 
 # Recodage de certaines variables ========================
 
-# Variable identifiant : on la stocke pour le dataset de test mais on la supprime du dataset l'identifiant n'ayant un sens que pour nous retrouver l'indvidu. Kaggle proposant d'uploader notre prédiction si l'on souhaite pour donner le score de notre algorithme.
-passengerId = TestData['PassengerId']
-meanAge=round(TrainingData['Age'].mean())
-create_figure_frequence(TrainingData, "Pclass")
-create_figure_frequence(TrainingData, "Title")
 
 
-
-
-
-
-
-
-
-
-# On va pas se faire suer pour notre part on va mettre la moyenne de l'age sur le bateau quand on ne la connait pas.
-sns.distplot(a= TrainingData['Age'].dropna(axis = 0),bins = 15,hist_kws={'rwidth'     :0.7}).set_title("distribution de l'age")
-
-
-
-
-
-
-
-TrainingData.columns, TestData.columns
-
-
-
-
-#A ce stade on est "bon" sur le contenu des variables, il n'y a plus de valeurs null dans aucun des dataset
-print(    TrainingData.isnull().sum())
-print(TestData.isnull().sum()   )
 
 
 # PARTIE 2: Encoder les données imputées ou transformées. ---------------------------
