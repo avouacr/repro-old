@@ -58,3 +58,12 @@ def feature_engineering(df, meanAge):
     axis = 1, inplace = True)
   return df
 
+
+def import_clean_data():
+    TrainingData = pd.read_csv('train.csv')
+    TestData = pd.read_csv('test.csv')
+    passengerId = TestData['PassengerId']
+    meanAge=round(TrainingData['Age'].mean())
+    TrainingData = feature_engineering(TrainingData, meanAge)
+    TestData = feature_engineering(TestData, meanAge)
+    return {"train": TrainingData, "test": TestData}
