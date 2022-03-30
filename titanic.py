@@ -1,3 +1,10 @@
+#import os
+#os.chdir('ensae-reproductibilite-projet/')
+
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from monmodule import *
 
 # PARTIE 2 ------------------------------------------------
 # Un peu d'exploration et de feature engineering
@@ -5,8 +12,9 @@
 # Recodage de certaines variables ========================
 
 
-
-
+dfs = import_clean_data()
+TrainingData = dfs['train']
+TestData = dfs['test']
 
 # PARTIE 2: Encoder les données imputées ou transformées. ---------------------------
 
