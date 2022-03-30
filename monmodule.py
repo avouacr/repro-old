@@ -38,3 +38,23 @@ def label_encode_variable(df: pd.DataFrame, var: str = "Sex"):
   encoder = LabelEncoder()
   df[var] = encoder.fit_transform(df[var].values)
   return df
+
+
+def feature_engineering(df, meanAge):
+  df['Title'] = creation_variable_titre(df)
+  df['Title'] = df['Title'].replace('Dona.', 'Mrs.')
+  #affichage des valeurs distinctes obtenues pour le 1er mot après la , dans les 2 dataset
+  print(df['Title'].unique())
+  df['Age'] = df['Age'].fillna(meanAge)
+  df['Ticket_Len'] = df['Ticket'].str.len()
+  # On s'y connait pas plus sur fare mais on doit la traiter car le dataset de test a une valeur null même sort que l'age on lui met une moyenne
+  df['Fare'] = df['Fare'].fillna(df['Fare'].mean())
+  # Le nombre de valeur null étant importante on va ajouter la variable hasCabin 1 ou 0 pour ne retenir que si la personne avait une cabine ou non, la encore en se renseignant peut etre que la numérotation des cabines avaient un sens plus précis.
+  df['hasCabin'] = df['Cabin'].notnull().astype(int)
+  # il a 2 null value dans Embarked qu'on ajoute à la valeur la plus fréquente S
+  df['Embarked'] = df['Embarked'].fillna('S')
+  df.drop(
+    ['PassengerId', 'Name', 'Ticket', 'Cabin'],
+    axis = 1, inplace = True)
+  return df
+
